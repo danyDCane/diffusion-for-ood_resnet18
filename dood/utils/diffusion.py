@@ -50,7 +50,7 @@ def get_diffusion_model(
         loss_type='mse',
         model_var_type='fixedsmall',
         batch_size=None,
-        normalization_queue_size=4096,
+        normalization_queue_size=512,
         scale_to_unit_gauss=False,
         scale_per_axis=False,
         use_max_std=False, 
@@ -68,8 +68,14 @@ def get_diffusion_model(
         assert only_first_betas > 0
         betas = betas[:only_first_betas]
 
+
+    # 決定神經網絡（Denoiser）最後一層要輸出多少數值。
+    # 如果模型變量類型是學習到的（learned）或學習到的範圍（learned_range），則輸出兩倍的特徵尺寸（ft_size）。
+    # 否則，輸出大小等於輸入特徵大小（ft_size）。
     out_channels = 2 * ft_size if model_var_type == 'learned' or model_var_type == 'learned_range' else ft_size
 
+
+    # 實例化真正負責「學習」的神經網絡模型。
     if denoiser_type.lower() == "unet0d":
         denoiser = UNet0D(in_channels=ft_size, 
                           model_channels=diffusion_denoiser_channels, 
@@ -82,8 +88,12 @@ def get_diffusion_model(
     else:
         raise ValueError
 
+
+    # 實例化「擴散過程」，不包含神經網絡，只負責數學運算。
     diffusion_process = GaussianDiffusion(betas, loss_type, model_var_type, num_steps_in_parallel=num_steps_in_parallel)
     # diffusion_model = build_dp(DiffusionModel(diffusion_process, denoiser, train_min_max=None), "cuda", device_ids=[0])
+    # 實例化「擴散模型」，包含神經網絡和擴散過程。
+    # 將「數學公式 (diffusion_process)」和「神經網絡 (denoiser)」打包在一起，並加入了 特徵正規化 (Feature Normalization) 的功能。
     diffusion_model = DiffusionModel(diffusion_process, denoiser, train_min_max=None, normalization_queue_size=normalization_queue_size, 
                                      uniform_timestep_sampler=uniform_timestep_sampler, scale_per_axis=scale_per_axis,
                                      scale_to_unit_gauss=scale_to_unit_gauss, use_max_std=use_max_std, half_scale=half_scale, scale_scaling_factor=scale_scaling_factor)

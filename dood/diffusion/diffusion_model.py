@@ -207,6 +207,7 @@ class DiffusionModel(nn.Module):
 
     def get_loss_iter(self, x_start):
         N, _ = x_start.shape
+        # 隨機抽出 x_start 個時間點
         t, weights = self.timestep_sampler.sample(batch_size=N, device=x_start.device)
         loss = self.diffusion_process.p_losses(denoise_fn=self.denoiser, x_start=x_start, t=t, reduce=False)
         loss = (loss * weights).mean()

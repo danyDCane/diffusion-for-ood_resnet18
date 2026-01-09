@@ -112,12 +112,16 @@ class ResBlock(TimestepBlock):
         self.dropout = dropout
         self.out_channels = out_channels if out_channels is not None else channels
 
+        # 處理輸入特徵 x 的全連接層 (Linear)。這裡的目的是將特徵從 channels 維度轉換為 out_channels 維度。
         self.in_layers = nn.Sequential(
             normalization(channels),
             nn.SiLU(),
             nn.Linear(channels, self.out_channels),
         )
         
+        # 處理時間戳嵌入 (timestep embedding) 的全連接層 (Linear)。
+        # 如果 emb_channels 大於 0，則將時間戳嵌入從 emb_channels 維度轉換為 out_channels 維度。
+        # 否則，使用恒等映射 (Identity)。
         if emb_channels > 0:
             self.emb_layers = nn.Sequential(
                 nn.SiLU(),
@@ -129,6 +133,7 @@ class ResBlock(TimestepBlock):
         else:
             self.emb_layers = nn.Identity()
         
+        # 處理輸出特徵的全連接層 (Linear)。
         self.out_layers = nn.Sequential(
             normalization(self.out_channels),
             nn.SiLU(),
@@ -171,12 +176,12 @@ class UNet0D(nn.Module):
 
     def __init__(
         self,
-        in_channels,
-        model_channels,
-        out_channels,
-        num_res_blocks=1,  # per stage
-        channel_mult=(1, 1, 1, 1),  # length indicates number of encoder/decoder stages
-        num_middle_blocks=2,
+        in_channels, # 輸入特徵維度 (例如 768)
+        model_channels, # 模型基礎通道數 (例如 128)
+        out_channels, # 輸出維度 (通常等於 in_channels，或是 2倍)
+        num_res_blocks=1,  # per stage # 每個階段(Level)有幾層 ResBlock
+        channel_mult=(1, 1, 1, 1),  # ★關鍵參數：控制每一層的寬度倍率，如果設為 (1, 2, 2)，且 model_channels=128，那麼網路會分三個階段，寬度分別是 128 -> 256 -> 256。這模擬了 UNet 圖片變小、通道變多的過程（雖然這裡沒有圖片大小變化）。
+        num_middle_blocks=2, # 中間塊數量 (例如 2)
         add_input_conversion_block=False,  # add one block at the start to convert from in_channels to model_channels
         add_dec_conversion_blocks=False,  # add one block in each decoder stage to convert from the skip+upsample channels to the stage channels
         dropout=0,

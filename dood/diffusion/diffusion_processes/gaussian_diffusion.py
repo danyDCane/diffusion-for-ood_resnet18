@@ -202,9 +202,12 @@ class GaussianDiffusion:
         if noise is None:
             noise = torch.randn(x_start.shape, dtype=x_start.dtype, device=x_start.device)
         assert noise.shape == x_start.shape and noise.dtype == x_start.dtype
+        # 用 noise 與 原圖 x_start 合成髒圖 x_t
         x_t = self.q_sample(x_start=x_start, t=t, noise=noise)
 
         if self.loss_type == 'mse':
+            # 這裡的 denoise_fn 就是 UNet0D
+            # model_output 是模型「覺得」剛剛加進去的噪聲長什麼樣子。
             model_output = denoise_fn(x_t, t)
             
             if self.model_var_type == 'learned_range' or self.model_var_type == 'learned':
@@ -567,51 +570,64 @@ class GaussianDiffusion:
         dtype = x_start.dtype
         
         eps_mse_terms = []
+        # 決定要測哪些時間點
         if steps is None:
-            steps = list(range(self.num_timesteps))[::-1]
+            steps = list(range(self.num_timesteps))[::-1] # 預設是從 T 到 0，每個時間點都要測
         else:
             steps = sorted(steps, reverse=True)
         assert self.num_timesteps not in steps  # eps_mse can not be computed for timestep T+1
-            
+        
+        # 一次生成所有時間點的噪聲
         noises_for_all_steps = torch.randn((len(steps), *x_start.shape), device=device)
+        # 形狀：[總步數, Batch, Channel] -> 展平成 [總步數*Batch, Channel]
         noises_for_all_steps = noises_for_all_steps.reshape(len(steps)*batch_size, *x_start.shape[1:])
-            
+        
         num_steps = len(steps)
-        num_steps_in_parallel = self.num_steps_in_parallel
+        num_steps_in_parallel = self.num_steps_in_parallel # 一次要測幾個時間點
+        # 把 steps 切成好幾塊 (Chunks)，每塊大小是 num_steps_in_parallel
         steps = [steps[i:i+num_steps_in_parallel] for i in range(0, len(steps), num_steps_in_parallel)]
         assert num_steps == sum([len(s) for s in steps])
         assert all([len(s) <= num_steps_in_parallel for s in steps])
         
-        x_start_repeated = x_start.repeat(num_steps_in_parallel, 1)
+        x_start_repeated = x_start.repeat(num_steps_in_parallel, 1) # 把 x_start 複製 num_steps_in_parallel 次，形狀：[總步數*Batch, Channel]
         
         t_batch = []
+        # 把每一輪的時間點都收集起來，形狀：[總步數*Batch]
         for ts in steps:
             for t in ts:
                 t_batch += [t]*batch_size
         t_batch_all = torch.tensor(t_batch, device=device)
         
         num_steps_done = 0
-        for cur_steps in steps:  # go through reverse trajectory in order (e.g. from x_T to x_T-1, ..., to x_0); t=999 means going from x_1000 to x_999
+        for cur_steps in steps:  # 遍歷每一個 Chunk (例如這輪跑 t=999~900)
+            # 取出這輪要用的噪聲
             noise = noises_for_all_steps[num_steps_done *batch_size : (num_steps_done + len(cur_steps)) * batch_size]
+            # 取出這輪要用的時間點
             t_batch = t_batch_all[num_steps_done * batch_size : (num_steps_done + len(cur_steps)) * batch_size]
+            # 取出這輪要用的 x_start
             cur_x_start_repeated = x_start_repeated[:(len(cur_steps)) * batch_size]
             num_steps_done += len(cur_steps)
             
+            # 根據 t 把乾淨圖變成髒圖
             x_t = self.q_sample(x_start=cur_x_start_repeated, t=t_batch, noise=noise)
                 
-            pred_eps = denoise_fn(x_t.to(dtype), t_batch)
+            pred_eps = denoise_fn(x_t.to(dtype), t_batch) # 用 denoiser 預測噪聲
             if self.model_var_type == 'learned_range' or self.model_var_type == 'learned':
                 assert pred_eps.shape == (x_t.shape[0], feat_dim * 2)
                 pred_eps, pred_var = torch.split(pred_eps, feat_dim, dim=1)
-            pred_eps = -pred_eps
+            pred_eps = -pred_eps # 預測的噪聲是負的，所以要取負號
+            # 計算 cosine similarity
             eps_mses = (noise * pred_eps).sum(-1, keepdim=True) / (noise.norm(dim=-1, keepdim=True) * pred_eps.norm(dim=-1, keepdim=True))
-            eps_mses = (eps_mses).mean(-1)
+            eps_mses = (eps_mses).mean(-1) # 本輪時間點的 cosine similarity 的平均值，形狀：[Chunk*Batch]
             
+            # 把這疊混在一起的分數，依照 batch_size 切開
             eps_mses = eps_mses.split(batch_size)
             for eps_mse in eps_mses:
                 eps_mse_terms.append(eps_mse)
-            
-        eps_mse_terms = torch.stack(eps_mse_terms, dim=1)  # ordered like eps_mse for x_1000 to x_999, ... x_1 to x_0
+        # eps_mse_terms 原本是一個 List，裡面有 T 個 tensor (每個 tensor 長度是 Batch)
+        # 現在把它們堆疊起來，形狀：[Batch, T]
+        eps_mse_terms = torch.stack(eps_mse_terms, dim=1)
+        # 把所有時間點的分數加起來，形狀：[Batch]，也就是一張圖所有時間點的分數總和
         eps_mse = eps_mse_terms.sum(dim=1)
             
         return eps_mse, eps_mse_terms  # shapes [N] and [N, T]
