@@ -1,0 +1,1 @@
+{"ood/score_type":"eps_mse","ood/dataset":"LSUN","_runtime":3,"_step":0,"ood/ood_score_mean":16.978389739990234,"ood/ood_score_std":1.8366351127624512,"ood/fpr_at_95_tpr":0.2981,"ood/id_score_mean":13.762240409851074,"ood/id_score_std":1.4325649738311768,"ood/auroc":0.9259415550000001,"_wandb":{"runtime":3},"_timestamp":1.7682245854460757e+09}

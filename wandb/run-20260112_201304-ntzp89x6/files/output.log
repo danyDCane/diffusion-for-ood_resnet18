@@ -1,0 +1,355 @@
+Wandb initialized: project=diffusion-ood-cifar10, name=ancient-durian-2
+Loading CIFAR-10 dataset...
+Initializing models...
+Starting training...
+Epoch 1/200: 100%|████████████████████████| 391/391 [00:10<00:00, 38.43it/s, loss_cls=1.9686, loss_diff=0.8596, total=2.8283]
+Normalized features - min: -0.9480, max: 6.1790, mean: 0.0000, std: 0.6826 [WARNING (std not ~1.0!)]
+SNR: 0.6685 [OK], ||x_0||: 15.1215 ± 3.1610, ||epsilon||: 22.6195 ± 0.6839, Expected: 22.6274
+Identity Correlation: 0.0000 ± 0.0000 [OK], Max: 0.0000
+Diffusion gradient norm: 0.110895, params with grad: 170
+Normalized features - min: -0.2676, max: 4.5535, mean: -0.1160, std: 0.1328 [WARNING (std not ~1.0!)]
+SNR: 0.1500 [OK], ||x_0||: 3.3835 ± 2.1224, ||epsilon||: 22.5551 ± 0.6949, Expected: 22.6274
+Identity Correlation: 0.5169 ± 0.0642 [OK], Max: 0.5868
+Normalized features - min: -0.3667, max: 3.7766, mean: -0.1170, std: 0.0856 [WARNING (std not ~1.0!)]
+SNR: 0.1419 [OK], ||x_0||: 3.2204 ± 0.6226, ||epsilon||: 22.6969 ± 0.6522, Expected: 22.6274
+Identity Correlation: 0.5829 ± 0.0854 [OK], Max: 0.6470
+Diffusion gradient norm: 0.113818, params with grad: 170
+Normalized features - min: -0.5564, max: 4.2914, mean: -0.1070, std: 0.0866 [WARNING (std not ~1.0!)]
+SNR: 0.1336 [OK], ||x_0||: 3.0250 ± 0.7429, ||epsilon||: 22.6452 ± 0.6256, Expected: 22.6274
+Identity Correlation: 0.6114 ± 0.0584 [OK], Max: 0.6626
+Normalized features - min: -0.6652, max: 6.0131, mean: -0.0234, std: 0.1731 [WARNING (std not ~1.0!)]
+SNR: 0.1621 [OK], ||x_0||: 3.6730 ± 1.4670, ||epsilon||: 22.6605 ± 0.6983, Expected: 22.6274
+Identity Correlation: 0.6118 ± 0.0666 [OK], Max: 0.6748
+Diffusion gradient norm: 0.114339, params with grad: 170
+Normalized features - min: -0.7268, max: 12.0431, mean: -0.0581, std: 0.1488 [WARNING (std not ~1.0!)]
+SNR: 0.1409 [OK], ||x_0||: 3.1923 ± 1.7016, ||epsilon||: 22.6645 ± 0.6842, Expected: 22.6274
+Identity Correlation: 0.6301 ± 0.0575 [OK], Max: 0.6929
+Normalized features - min: -0.7772, max: 13.4590, mean: -0.0689, std: 0.1331 [WARNING (std not ~1.0!)]
+SNR: 0.1309 [OK], ||x_0||: 2.9547 ± 1.6712, ||epsilon||: 22.5681 ± 0.7179, Expected: 22.6274
+Identity Correlation: 0.6401 ± 0.0665 [OK], Max: 0.6963
+Diffusion gradient norm: 0.116446, params with grad: 170
+Normalized features - min: -0.8287, max: 11.7430, mean: -0.0477, std: 0.1406 [WARNING (std not ~1.0!)]
+SNR: 0.1279 [OK], ||x_0||: 2.8969 ± 1.7081, ||epsilon||: 22.6487 ± 0.6414, Expected: 22.6274
+Identity Correlation: 0.6393 ± 0.0869 [OK], Max: 0.6985
+
+Epoch 1/200:
+  Loss_cls: 2.7798, Loss_diff: 0.9285, Total: 3.7084
+Epoch 2/200: 100%|████████████████████████| 391/391 [00:09<00:00, 39.65it/s, loss_cls=1.4986, loss_diff=0.7503, total=2.2489]
+Normalized features - min: -0.8373, max: 9.1070, mean: -0.0123, std: 0.1459 [WARNING (std not ~1.0!)]
+SNR: 0.1342 [OK], ||x_0||: 3.0284 ± 1.3479, ||epsilon||: 22.5697 ± 0.6749, Expected: 22.6274
+Identity Correlation: 0.6525 ± 0.0794 [OK], Max: 0.7328
+Diffusion gradient norm: 0.120945, params with grad: 170
+Normalized features - min: -0.8524, max: 5.8977, mean: -0.0040, std: 0.1554 [WARNING (std not ~1.0!)]
+SNR: 0.1479 [OK], ||x_0||: 3.3385 ± 1.1147, ||epsilon||: 22.5782 ± 0.6956, Expected: 22.6274
+Identity Correlation: 0.6699 ± 0.0481 [OK], Max: 0.7258
+Normalized features - min: -0.8705, max: 5.4998, mean: -0.0157, std: 0.1543 [WARNING (std not ~1.0!)]
+SNR: 0.1435 [OK], ||x_0||: 3.2581 ± 1.3077, ||epsilon||: 22.7018 ± 0.7296, Expected: 22.6274
+Identity Correlation: 0.6703 ± 0.0537 [OK], Max: 0.7240
+Diffusion gradient norm: 0.117374, params with grad: 170
+Normalized features - min: -0.9985, max: 7.0809, mean: -0.0037, std: 0.1466 [WARNING (std not ~1.0!)]
+SNR: 0.1318 [OK], ||x_0||: 2.9973 ± 1.4277, ||epsilon||: 22.7488 ± 0.6920, Expected: 22.6274
+Identity Correlation: 0.6738 ± 0.0721 [OK], Max: 0.7440
+Normalized features - min: -1.0352, max: 7.6280, mean: -0.0010, std: 0.1423 [WARNING (std not ~1.0!)]
+SNR: 0.1288 [OK], ||x_0||: 2.9092 ± 1.3851, ||epsilon||: 22.5908 ± 0.7724, Expected: 22.6274
+Identity Correlation: 0.6898 ± 0.0336 [OK], Max: 0.7394
+Diffusion gradient norm: 0.115672, params with grad: 170
+Normalized features - min: -1.0447, max: 6.4321, mean: 0.0026, std: 0.1589 [WARNING (std not ~1.0!)]
+SNR: 0.1484 [OK], ||x_0||: 3.3708 ± 1.2545, ||epsilon||: 22.7083 ± 0.7436, Expected: 22.6274
+Identity Correlation: 0.6955 ± 0.0438 [OK], Max: 0.7425
+Normalized features - min: -1.0324, max: 4.9442, mean: -0.0015, std: 0.1607 [WARNING (std not ~1.0!)]
+SNR: 0.1530 [OK], ||x_0||: 3.4702 ± 1.0899, ||epsilon||: 22.6764 ± 0.7241, Expected: 22.6274
+Identity Correlation: 0.6862 ± 0.0811 [OK], Max: 0.7574
+Diffusion gradient norm: 0.133447, params with grad: 170
+Normalized features - min: -0.9846, max: 5.3621, mean: 0.0206, std: 0.1683 [WARNING (std not ~1.0!)]
+SNR: 0.1594 [OK], ||x_0||: 3.6191 ± 1.2759, ||epsilon||: 22.6999 ± 0.7063, Expected: 22.6274
+Identity Correlation: 0.7019 ± 0.0557 [OK], Max: 0.7611
+
+Epoch 2/200:
+  Loss_cls: 1.7768, Loss_diff: 0.7998, Total: 2.5766
+Epoch 3/200: 100%|████████████████████████| 391/391 [00:09<00:00, 39.41it/s, loss_cls=1.4633, loss_diff=0.6360, total=2.0993]
+Normalized features - min: -1.0446, max: 5.3042, mean: 0.0280, std: 0.1923 [WARNING (std not ~1.0!)]
+SNR: 0.1859 [OK], ||x_0||: 4.1857 ± 1.3497, ||epsilon||: 22.5157 ± 0.7872, Expected: 22.6274
+Identity Correlation: 0.7028 ± 0.0598 [OK], Max: 0.7566
+Diffusion gradient norm: 0.117472, params with grad: 170
+Normalized features - min: -1.0163, max: 5.4748, mean: 0.0184, std: 0.1943 [WARNING (std not ~1.0!)]
+SNR: 0.1853 [OK], ||x_0||: 4.1847 ± 1.4182, ||epsilon||: 22.5873 ± 0.7283, Expected: 22.6274
+Identity Correlation: 0.6944 ± 0.1083 [OK], Max: 0.7710
+Normalized features - min: -1.0066, max: 4.7594, mean: 0.0539, std: 0.2332 [WARNING (std not ~1.0!)]
+SNR: 0.2291 [OK], ||x_0||: 5.1864 ± 1.5679, ||epsilon||: 22.6399 ± 0.7357, Expected: 22.6274
+Identity Correlation: 0.7030 ± 0.0912 [OK], Max: 0.7658
+Diffusion gradient norm: 0.127746, params with grad: 170
+Normalized features - min: -0.9586, max: 4.3326, mean: 0.0248, std: 0.2116 [WARNING (std not ~1.0!)]
+SNR: 0.2054 [OK], ||x_0||: 4.6250 ± 1.3615, ||epsilon||: 22.5221 ± 0.5914, Expected: 22.6274
+Identity Correlation: 0.6952 ± 0.1159 [OK], Max: 0.7901
+Normalized features - min: -0.9885, max: 4.6818, mean: 0.0179, std: 0.2235 [WARNING (std not ~1.0!)]
+SNR: 0.2142 [OK], ||x_0||: 4.8552 ± 1.4807, ||epsilon||: 22.6627 ± 0.7500, Expected: 22.6274
+Identity Correlation: 0.7023 ± 0.1092 [OK], Max: 0.7796
+Diffusion gradient norm: 0.146733, params with grad: 170
+Normalized features - min: -0.9737, max: 4.3906, mean: -0.0001, std: 0.1992 [WARNING (std not ~1.0!)]
+SNR: 0.1910 [OK], ||x_0||: 4.3080 ± 1.3318, ||epsilon||: 22.5588 ± 0.7262, Expected: 22.6274
+Identity Correlation: 0.7191 ± 0.0885 [OK], Max: 0.7805
+Normalized features - min: -0.9508, max: 5.3239, mean: -0.0153, std: 0.2008 [WARNING (std not ~1.0!)]
+SNR: 0.1938 [OK], ||x_0||: 4.3744 ± 1.2778, ||epsilon||: 22.5761 ± 0.7421, Expected: 22.6274
+Identity Correlation: 0.7124 ± 0.1062 [OK], Max: 0.7886
+Diffusion gradient norm: 0.139091, params with grad: 170
+Normalized features - min: -0.9557, max: 5.9153, mean: -0.0267, std: 0.1981 [WARNING (std not ~1.0!)]
+SNR: 0.1902 [OK], ||x_0||: 4.3124 ± 1.3675, ||epsilon||: 22.6758 ± 0.7168, Expected: 22.6274
+Identity Correlation: 0.7282 ± 0.0875 [OK], Max: 0.8068
+
+Epoch 3/200:
+  Loss_cls: 1.6085, Loss_diff: 0.6901, Total: 2.2986
+Epoch 4/200: 100%|████████████████████████| 391/391 [00:09<00:00, 40.01it/s, loss_cls=1.3742, loss_diff=0.5443, total=1.9185]
+Normalized features - min: -0.9498, max: 4.6478, mean: -0.0007, std: 0.2166 [WARNING (std not ~1.0!)]
+SNR: 0.2075 [OK], ||x_0||: 4.6911 ± 1.4238, ||epsilon||: 22.6096 ± 0.6755, Expected: 22.6274
+Identity Correlation: 0.7439 ± 0.0670 [OK], Max: 0.8025
+Diffusion gradient norm: 0.119915, params with grad: 170
+Normalized features - min: -0.9474, max: 4.4220, mean: 0.0061, std: 0.2256 [WARNING (std not ~1.0!)]
+SNR: 0.2163 [OK], ||x_0||: 4.9046 ± 1.4270, ||epsilon||: 22.6790 ± 0.7767, Expected: 22.6274
+Identity Correlation: 0.7350 ± 0.0942 [OK], Max: 0.8087
+Normalized features - min: -0.9447, max: 3.9580, mean: 0.0004, std: 0.2224 [WARNING (std not ~1.0!)]
+SNR: 0.2129 [OK], ||x_0||: 4.8074 ± 1.4905, ||epsilon||: 22.5846 ± 0.7368, Expected: 22.6274
+Identity Correlation: 0.7216 ± 0.1262 [OK], Max: 0.7988
+Diffusion gradient norm: 0.159916, params with grad: 170
+Normalized features - min: -0.9301, max: 4.8775, mean: 0.0054, std: 0.2318 [WARNING (std not ~1.0!)]
+SNR: 0.2238 [OK], ||x_0||: 5.0514 ± 1.4238, ||epsilon||: 22.5755 ± 0.7847, Expected: 22.6274
+Identity Correlation: 0.7364 ± 0.1205 [OK], Max: 0.8061
+Normalized features - min: -0.9246, max: 3.9839, mean: 0.0201, std: 0.2535 [WARNING (std not ~1.0!)]
+SNR: 0.2430 [OK], ||x_0||: 5.5076 ± 1.6755, ||epsilon||: 22.6623 ± 0.6845, Expected: 22.6274
+Identity Correlation: 0.7453 ± 0.1077 [OK], Max: 0.8136
+Diffusion gradient norm: 0.145044, params with grad: 170
+Normalized features - min: -0.9394, max: 4.1280, mean: 0.0325, std: 0.2572 [WARNING (std not ~1.0!)]
+SNR: 0.2491 [OK], ||x_0||: 5.6503 ± 1.5858, ||epsilon||: 22.6792 ± 0.7622, Expected: 22.6274
+Identity Correlation: 0.7584 ± 0.0746 [OK], Max: 0.8148
+Normalized features - min: -0.9548, max: 5.8460, mean: 0.0312, std: 0.2574 [WARNING (std not ~1.0!)]
+SNR: 0.2485 [OK], ||x_0||: 5.6236 ± 1.6791, ||epsilon||: 22.6309 ± 0.7451, Expected: 22.6274
+Identity Correlation: 0.7335 ± 0.1278 [OK], Max: 0.8118
+Diffusion gradient norm: 0.179033, params with grad: 170
+Normalized features - min: -0.9526, max: 4.8156, mean: -0.0229, std: 0.2183 [WARNING (std not ~1.0!)]
+SNR: 0.2105 [OK], ||x_0||: 4.7784 ± 1.3631, ||epsilon||: 22.7003 ± 0.7371, Expected: 22.6274
+Identity Correlation: 0.7473 ± 0.1219 [OK], Max: 0.8166
+
+Epoch 4/200:
+  Loss_cls: 1.4580, Loss_diff: 0.5959, Total: 2.0538
+Epoch 5/200: 100%|████████████████████████| 391/391 [00:09<00:00, 40.02it/s, loss_cls=1.1478, loss_diff=0.4750, total=1.6228]
+Normalized features - min: -0.9596, max: 3.8034, mean: 0.0255, std: 0.2509 [WARNING (std not ~1.0!)]
+SNR: 0.2434 [OK], ||x_0||: 5.5122 ± 1.4825, ||epsilon||: 22.6455 ± 0.7452, Expected: 22.6274
+Identity Correlation: 0.7459 ± 0.1287 [OK], Max: 0.8221
+Diffusion gradient norm: 0.178703, params with grad: 170
+Normalized features - min: -0.9716, max: 4.5531, mean: -0.0125, std: 0.2268 [WARNING (std not ~1.0!)]
+SNR: 0.2201 [OK], ||x_0||: 4.9851 ± 1.2554, ||epsilon||: 22.6504 ± 0.7379, Expected: 22.6274
+Identity Correlation: 0.7535 ± 0.1088 [OK], Max: 0.8294
+Normalized features - min: -0.9779, max: 4.1657, mean: 0.0298, std: 0.2742 [WARNING (std not ~1.0!)]
+SNR: 0.2618 [OK], ||x_0||: 5.9425 ± 1.9149, ||epsilon||: 22.7018 ± 0.7046, Expected: 22.6274
+Identity Correlation: 0.7452 ± 0.1331 [OK], Max: 0.8302
+Diffusion gradient norm: 0.189663, params with grad: 170
+Normalized features - min: -0.9873, max: 6.1790, mean: 0.0150, std: 0.2517 [WARNING (std not ~1.0!)]
+SNR: 0.2431 [OK], ||x_0||: 5.5070 ± 1.4955, ||epsilon||: 22.6556 ± 0.7569, Expected: 22.6274
+Identity Correlation: 0.7530 ± 0.1212 [OK], Max: 0.8371
+Normalized features - min: -1.0006, max: 4.6420, mean: 0.0210, std: 0.2671 [WARNING (std not ~1.0!)]
+SNR: 0.2574 [OK], ||x_0||: 5.8258 ± 1.6829, ||epsilon||: 22.6298 ± 0.7162, Expected: 22.6274
+Identity Correlation: 0.7745 ± 0.0990 [OK], Max: 0.8319
+Diffusion gradient norm: 0.152146, params with grad: 170
+Normalized features - min: -1.0075, max: 4.6865, mean: 0.0049, std: 0.2617 [WARNING (std not ~1.0!)]
+SNR: 0.2524 [OK], ||x_0||: 5.6896 ± 1.6541, ||epsilon||: 22.5439 ± 0.7080, Expected: 22.6274
+Identity Correlation: 0.7718 ± 0.0970 [OK], Max: 0.8349
+Normalized features - min: -1.0130, max: 4.0373, mean: 0.0335, std: 0.2749 [WARNING (std not ~1.0!)]
+SNR: 0.2662 [OK], ||x_0||: 6.0400 ± 1.6726, ||epsilon||: 22.6915 ± 0.6857, Expected: 22.6274
+Identity Correlation: 0.7811 ± 0.0937 [OK], Max: 0.8432
+Diffusion gradient norm: 0.152809, params with grad: 170
+Normalized features - min: -1.0222, max: 4.3460, mean: 0.0530, std: 0.2937 [WARNING (std not ~1.0!)]
+SNR: 0.2871 [OK], ||x_0||: 6.4783 ± 1.9128, ||epsilon||: 22.5676 ± 0.6767, Expected: 22.6274
+Identity Correlation: 0.7639 ± 0.1114 [OK], Max: 0.8579
+
+Epoch 5/200:
+  Loss_cls: 1.3171, Loss_diff: 0.5161, Total: 1.8332
+  Test Accuracy: 53.77%
+  New best accuracy: 53.77%
+Epoch 6/200: 100%|████████████████████████| 391/391 [00:09<00:00, 39.34it/s, loss_cls=1.1260, loss_diff=0.4449, total=1.5709]
+Normalized features - min: -1.0106, max: 5.0457, mean: 0.0223, std: 0.2835 [WARNING (std not ~1.0!)]
+SNR: 0.2704 [OK], ||x_0||: 6.1476 ± 1.9095, ||epsilon||: 22.7334 ± 0.7765, Expected: 22.6274
+Identity Correlation: 0.7666 ± 0.1239 [OK], Max: 0.8393
+Diffusion gradient norm: 0.197249, params with grad: 170
+Normalized features - min: -0.9972, max: 3.8985, mean: 0.0344, std: 0.2912 [WARNING (std not ~1.0!)]
+SNR: 0.2828 [OK], ||x_0||: 6.4135 ± 1.7020, ||epsilon||: 22.6789 ± 0.7414, Expected: 22.6274
+Identity Correlation: 0.7649 ± 0.1248 [OK], Max: 0.8425
+Normalized features - min: -0.9847, max: 3.9292, mean: 0.0149, std: 0.2818 [WARNING (std not ~1.0!)]
+SNR: 0.2686 [OK], ||x_0||: 6.1074 ± 1.8664, ||epsilon||: 22.7415 ± 0.7214, Expected: 22.6274
+Identity Correlation: 0.7737 ± 0.1161 [OK], Max: 0.8423
+Diffusion gradient norm: 0.184864, params with grad: 170
+Normalized features - min: -0.9735, max: 3.8646, mean: 0.0147, std: 0.2789 [WARNING (std not ~1.0!)]
+SNR: 0.2684 [OK], ||x_0||: 6.0653 ± 1.7805, ||epsilon||: 22.5986 ± 0.6826, Expected: 22.6274
+Identity Correlation: 0.7989 ± 0.0729 [OK], Max: 0.8566
+Normalized features - min: -0.9644, max: 4.2542, mean: 0.0016, std: 0.2806 [WARNING (std not ~1.0!)]
+SNR: 0.2686 [OK], ||x_0||: 6.1007 ± 1.7695, ||epsilon||: 22.7129 ± 0.6718, Expected: 22.6274
+Identity Correlation: 0.7756 ± 0.1234 [OK], Max: 0.8522
+Diffusion gradient norm: 0.156749, params with grad: 170
+Normalized features - min: -0.9628, max: 5.3874, mean: 0.0031, std: 0.2847 [WARNING (std not ~1.0!)]
+SNR: 0.2740 [OK], ||x_0||: 6.1671 ± 1.8682, ||epsilon||: 22.5115 ± 0.6980, Expected: 22.6274
+Identity Correlation: 0.7892 ± 0.0957 [OK], Max: 0.8594
+Normalized features - min: -0.9689, max: 4.3342, mean: -0.0024, std: 0.2928 [WARNING (std not ~1.0!)]
+SNR: 0.2828 [OK], ||x_0||: 6.3961 ± 1.7356, ||epsilon||: 22.6139 ± 0.6920, Expected: 22.6274
+Identity Correlation: 0.7786 ± 0.1101 [OK], Max: 0.8573
+Diffusion gradient norm: 0.158053, params with grad: 170
+Normalized features - min: -0.9620, max: 4.3763, mean: -0.0173, std: 0.2805 [WARNING (std not ~1.0!)]
+SNR: 0.2717 [OK], ||x_0||: 6.1362 ± 1.6783, ||epsilon||: 22.5813 ± 0.7105, Expected: 22.6274
+Identity Correlation: 0.7969 ± 0.0889 [OK], Max: 0.8666
+
+Epoch 6/200:
+  Loss_cls: 1.1748, Loss_diff: 0.4525, Total: 1.6273
+Epoch 7/200: 100%|████████████████████████| 391/391 [00:09<00:00, 39.73it/s, loss_cls=1.0946, loss_diff=0.3779, total=1.4725]
+Normalized features - min: -0.9574, max: 3.9242, mean: 0.0042, std: 0.3045 [WARNING (std not ~1.0!)]
+SNR: 0.2911 [OK], ||x_0||: 6.6091 ± 1.9543, ||epsilon||: 22.7002 ± 0.7267, Expected: 22.6274
+Identity Correlation: 0.7876 ± 0.1133 [OK], Max: 0.8628
+Diffusion gradient norm: 0.150251, params with grad: 170
+Normalized features - min: -0.9331, max: 4.1588, mean: -0.0084, std: 0.2966 [WARNING (std not ~1.0!)]
+SNR: 0.2867 [OK], ||x_0||: 6.4788 ± 1.7682, ||epsilon||: 22.5989 ± 0.7549, Expected: 22.6274
+Identity Correlation: 0.7921 ± 0.1038 [OK], Max: 0.8593
+Normalized features - min: -0.9330, max: 5.0141, mean: 0.0089, std: 0.3152 [WARNING (std not ~1.0!)]
+SNR: 0.3010 [OK], ||x_0||: 6.8284 ± 2.0757, ||epsilon||: 22.6870 ± 0.7026, Expected: 22.6274
+Identity Correlation: 0.7811 ± 0.1353 [OK], Max: 0.8605
+Diffusion gradient norm: 0.208438, params with grad: 170
+Normalized features - min: -0.9276, max: 4.3155, mean: 0.0103, std: 0.3112 [WARNING (std not ~1.0!)]
+SNR: 0.2966 [OK], ||x_0||: 6.7160 ± 2.1343, ||epsilon||: 22.6429 ± 0.6642, Expected: 22.6274
+Identity Correlation: 0.7994 ± 0.0967 [OK], Max: 0.8667
+Normalized features - min: -0.9205, max: 3.6261, mean: 0.0133, std: 0.3096 [WARNING (std not ~1.0!)]
+SNR: 0.2983 [OK], ||x_0||: 6.7486 ± 1.9097, ||epsilon||: 22.6239 ± 0.6622, Expected: 22.6274
+Identity Correlation: 0.7947 ± 0.1042 [OK], Max: 0.8633
+Diffusion gradient norm: 0.168813, params with grad: 170
+Normalized features - min: -0.9082, max: 3.6306, mean: 0.0262, std: 0.3154 [WARNING (std not ~1.0!)]
+SNR: 0.3048 [OK], ||x_0||: 6.8765 ± 2.0085, ||epsilon||: 22.5592 ± 0.6942, Expected: 22.6274
+Identity Correlation: 0.7919 ± 0.1102 [OK], Max: 0.8679
+Normalized features - min: -0.9071, max: 5.3208, mean: 0.0130, std: 0.3231 [WARNING (std not ~1.0!)]
+SNR: 0.3053 [OK], ||x_0||: 6.9160 ± 2.3944, ||epsilon||: 22.6560 ± 0.6807, Expected: 22.6274
+Identity Correlation: 0.7724 ± 0.1467 [OK], Max: 0.8649
+Diffusion gradient norm: 0.219429, params with grad: 170
+Normalized features - min: -0.9054, max: 4.0277, mean: 0.0033, std: 0.2891 [WARNING (std not ~1.0!)]
+SNR: 0.2790 [OK], ||x_0||: 6.2971 ± 1.7831, ||epsilon||: 22.5682 ± 0.6896, Expected: 22.6274
+Identity Correlation: 0.7933 ± 0.1221 [OK], Max: 0.8696
+
+Epoch 7/200:
+  Loss_cls: 1.0490, Loss_diff: 0.4008, Total: 1.4498
+Epoch 8/200: 100%|████████████████████████| 391/391 [00:09<00:00, 39.29it/s, loss_cls=0.9609, loss_diff=0.3324, total=1.2933]
+Normalized features - min: -0.8984, max: 3.8662, mean: -0.0094, std: 0.3032 [WARNING (std not ~1.0!)]
+SNR: 0.2920 [OK], ||x_0||: 6.5763 ± 1.9704, ||epsilon||: 22.5206 ± 0.6585, Expected: 22.6274
+Identity Correlation: 0.7888 ± 0.1403 [OK], Max: 0.8766
+Diffusion gradient norm: 0.209165, params with grad: 170
+Normalized features - min: -0.8980, max: 4.0477, mean: 0.0058, std: 0.3067 [WARNING (std not ~1.0!)]
+SNR: 0.2937 [OK], ||x_0||: 6.6589 ± 1.9633, ||epsilon||: 22.6723 ± 0.7281, Expected: 22.6274
+Identity Correlation: 0.7822 ± 0.1484 [OK], Max: 0.8751
+Normalized features - min: -0.8970, max: 4.1525, mean: 0.0028, std: 0.3170 [WARNING (std not ~1.0!)]
+SNR: 0.3016 [OK], ||x_0||: 6.8453 ± 2.1496, ||epsilon||: 22.6966 ± 0.7296, Expected: 22.6274
+Identity Correlation: 0.8044 ± 0.1168 [OK], Max: 0.8810
+Diffusion gradient norm: 0.183168, params with grad: 170
+Normalized features - min: -0.8833, max: 4.3297, mean: -0.0000, std: 0.3115 [WARNING (std not ~1.0!)]
+SNR: 0.3014 [OK], ||x_0||: 6.8124 ± 1.8147, ||epsilon||: 22.6052 ± 0.7145, Expected: 22.6274
+Identity Correlation: 0.7988 ± 0.1094 [OK], Max: 0.8765
+Normalized features - min: -0.8723, max: 4.9166, mean: -0.0052, std: 0.3046 [WARNING (std not ~1.0!)]
+SNR: 0.2933 [OK], ||x_0||: 6.6463 ± 1.8335, ||epsilon||: 22.6583 ± 0.6866, Expected: 22.6274
+Identity Correlation: 0.8019 ± 0.1158 [OK], Max: 0.8721
+Diffusion gradient norm: 0.162387, params with grad: 170
+Normalized features - min: -0.8631, max: 4.2825, mean: -0.0131, std: 0.2857 [WARNING (std not ~1.0!)]
+SNR: 0.2738 [OK], ||x_0||: 6.2114 ± 1.8219, ||epsilon||: 22.6853 ± 0.7499, Expected: 22.6274
+Identity Correlation: 0.7869 ± 0.1422 [OK], Max: 0.8788
+Normalized features - min: -0.8570, max: 3.4865, mean: -0.0132, std: 0.2921 [WARNING (std not ~1.0!)]
+SNR: 0.2823 [OK], ||x_0||: 6.3853 ± 1.7369, ||epsilon||: 22.6166 ± 0.7528, Expected: 22.6274
+Identity Correlation: 0.8003 ± 0.1395 [OK], Max: 0.8799
+Diffusion gradient norm: 0.234496, params with grad: 170
+Normalized features - min: -0.8403, max: 4.0173, mean: -0.0069, std: 0.2981 [WARNING (std not ~1.0!)]
+SNR: 0.2876 [OK], ||x_0||: 6.5022 ± 1.8052, ||epsilon||: 22.6064 ± 0.6735, Expected: 22.6274
+Identity Correlation: 0.8086 ± 0.1074 [OK], Max: 0.8803
+
+Epoch 8/200:
+  Loss_cls: 0.9318, Loss_diff: 0.3579, Total: 1.2897
+Epoch 9/200: 100%|████████████████████████| 391/391 [00:09<00:00, 40.52it/s, loss_cls=0.8531, loss_diff=0.3173, total=1.1704]
+Normalized features - min: -0.8321, max: 5.4528, mean: -0.0109, std: 0.2971 [WARNING (std not ~1.0!)]
+SNR: 0.2841 [OK], ||x_0||: 6.4032 ± 2.0713, ||epsilon||: 22.5375 ± 0.7403, Expected: 22.6274
+Identity Correlation: 0.8050 ± 0.1133 [OK], Max: 0.8857
+Diffusion gradient norm: 0.193420, params with grad: 170
+Normalized features - min: -0.8196, max: 3.8566, mean: -0.0030, std: 0.2872 [WARNING (std not ~1.0!)]
+SNR: 0.2772 [OK], ||x_0||: 6.2700 ± 1.7148, ||epsilon||: 22.6220 ± 0.7789, Expected: 22.6274
+Identity Correlation: 0.8087 ± 0.1170 [OK], Max: 0.8808
+Normalized features - min: -0.8172, max: 4.4302, mean: -0.0055, std: 0.2880 [WARNING (std not ~1.0!)]
+SNR: 0.2769 [OK], ||x_0||: 6.2596 ± 1.8273, ||epsilon||: 22.6034 ± 0.6495, Expected: 22.6274
+Identity Correlation: 0.7859 ± 0.1576 [OK], Max: 0.8843
+Diffusion gradient norm: 0.300931, params with grad: 170
+Normalized features - min: -0.8015, max: 4.2593, mean: -0.0058, std: 0.2854 [WARNING (std not ~1.0!)]
+SNR: 0.2717 [OK], ||x_0||: 6.1808 ± 1.8850, ||epsilon||: 22.7474 ± 0.6665, Expected: 22.6274
+Identity Correlation: 0.8141 ± 0.1029 [OK], Max: 0.8821
+Normalized features - min: -0.7947, max: 4.0526, mean: 0.0001, std: 0.2776 [WARNING (std not ~1.0!)]
+SNR: 0.2680 [OK], ||x_0||: 6.0781 ± 1.5912, ||epsilon||: 22.6766 ± 0.6713, Expected: 22.6274
+Identity Correlation: 0.8079 ± 0.1250 [OK], Max: 0.8832
+Diffusion gradient norm: 0.226977, params with grad: 170
+Normalized features - min: -0.7954, max: 4.8105, mean: -0.0059, std: 0.2774 [WARNING (std not ~1.0!)]
+SNR: 0.2631 [OK], ||x_0||: 5.9357 ± 2.0553, ||epsilon||: 22.5567 ± 0.7249, Expected: 22.6274
+Identity Correlation: 0.8129 ± 0.1142 [OK], Max: 0.8859
+Normalized features - min: -0.7938, max: 4.1104, mean: -0.0049, std: 0.2721 [WARNING (std not ~1.0!)]
+SNR: 0.2609 [OK], ||x_0||: 5.9103 ± 1.7356, ||epsilon||: 22.6505 ± 0.6916, Expected: 22.6274
+Identity Correlation: 0.8087 ± 0.1231 [OK], Max: 0.8860
+Diffusion gradient norm: 0.223324, params with grad: 170
+Normalized features - min: -0.7935, max: 3.6124, mean: -0.0007, std: 0.2712 [WARNING (std not ~1.0!)]
+SNR: 0.2617 [OK], ||x_0||: 5.9354 ± 1.5681, ||epsilon||: 22.6809 ± 0.7326, Expected: 22.6274
+Identity Correlation: 0.8135 ± 0.1347 [OK], Max: 0.8788
+
+Epoch 9/200:
+  Loss_cls: 0.8282, Loss_diff: 0.3253, Total: 1.1535
+Epoch 10/200: 100%|███████████████████████| 391/391 [00:09<00:00, 39.32it/s, loss_cls=0.7655, loss_diff=0.2900, total=1.0555]
+Normalized features - min: -0.7945, max: 3.9486, mean: -0.0016, std: 0.2725 [WARNING (std not ~1.0!)]
+SNR: 0.2629 [OK], ||x_0||: 5.9339 ± 1.6794, ||epsilon||: 22.5687 ± 0.7339, Expected: 22.6274
+Identity Correlation: 0.8064 ± 0.1415 [OK], Max: 0.8812
+Diffusion gradient norm: 0.280167, params with grad: 170
+Normalized features - min: -0.7946, max: 4.1271, mean: 0.0021, std: 0.2728 [WARNING (std not ~1.0!)]
+SNR: 0.2632 [OK], ||x_0||: 5.9558 ± 1.6259, ||epsilon||: 22.6287 ± 0.7109, Expected: 22.6274
+Identity Correlation: 0.8058 ± 0.1366 [OK], Max: 0.8878
+Normalized features - min: -0.7999, max: 4.3056, mean: -0.0014, std: 0.2673 [WARNING (std not ~1.0!)]
+SNR: 0.2567 [OK], ||x_0||: 5.8241 ± 1.6374, ||epsilon||: 22.6902 ± 0.6824, Expected: 22.6274
+Identity Correlation: 0.8226 ± 0.1028 [OK], Max: 0.8824
+Diffusion gradient norm: 0.211580, params with grad: 170
+Normalized features - min: -0.7864, max: 3.9700, mean: -0.0042, std: 0.2680 [WARNING (std not ~1.0!)]
+SNR: 0.2567 [OK], ||x_0||: 5.7975 ± 1.7884, ||epsilon||: 22.5819 ± 0.7258, Expected: 22.6274
+Identity Correlation: 0.8110 ± 0.1282 [OK], Max: 0.8836
+Normalized features - min: -0.7735, max: 3.9251, mean: 0.0001, std: 0.2612 [WARNING (std not ~1.0!)]
+SNR: 0.2512 [OK], ||x_0||: 5.6883 ± 1.6088, ||epsilon||: 22.6429 ± 0.6687, Expected: 22.6274
+Identity Correlation: 0.8222 ± 0.1112 [OK], Max: 0.8841
+Diffusion gradient norm: 0.188470, params with grad: 170
+Normalized features - min: -0.7747, max: 4.1199, mean: 0.0009, std: 0.2668 [WARNING (std not ~1.0!)]
+SNR: 0.2527 [OK], ||x_0||: 5.7333 ± 1.8953, ||epsilon||: 22.6868 ± 0.7248, Expected: 22.6274
+Identity Correlation: 0.8109 ± 0.1237 [OK], Max: 0.8883
+Normalized features - min: -0.7665, max: 3.6214, mean: -0.0019, std: 0.2590 [WARNING (std not ~1.0!)]
+SNR: 0.2479 [OK], ||x_0||: 5.6151 ± 1.6842, ||epsilon||: 22.6528 ± 0.6862, Expected: 22.6274
+Identity Correlation: 0.8190 ± 0.1064 [OK], Max: 0.8889
+Diffusion gradient norm: 0.210739, params with grad: 170
+Normalized features - min: -0.7486, max: 3.6820, mean: -0.0020, std: 0.2560 [WARNING (std not ~1.0!)]
+SNR: 0.2466 [OK], ||x_0||: 5.5661 ± 1.6097, ||epsilon||: 22.5757 ± 0.7696, Expected: 22.6274
+Identity Correlation: 0.8019 ± 0.1657 [OK], Max: 0.8888
+
+Epoch 10/200:
+  Loss_cls: 0.7436, Loss_diff: 0.3008, Total: 1.0444
+  Test Accuracy: 70.42%
+  New best accuracy: 70.42%
+  Checkpoint saved to ./checkpoints/checkpoint_epoch_10.pth
+Epoch 11/200:  11%|██▌                     | 42/391 [00:01<00:09, 36.31it/s, loss_cls=0.6465, loss_diff=0.2848, total=0.9313]
+Normalized features - min: -0.7438, max: 4.3743, mean: -0.0020, std: 0.2560 [WARNING (std not ~1.0!)]
+SNR: 0.2457 [OK], ||x_0||: 5.5565 ± 1.6446, ||epsilon||: 22.6167 ± 0.7211, Expected: 22.6274
+Identity Correlation: 0.8312 ± 0.1021 [OK], Max: 0.8885
+Diffusion gradient norm: 0.232380, params with grad: 170
+Traceback (most recent call last):
+  File "/home/server5090/Desktop/M11307320/diffusion-for-ood/train_cifar10.py", line 414, in <module>
+    train(args)
+  File "/home/server5090/Desktop/M11307320/diffusion-for-ood/train_cifar10.py", line 213, in train
+    latents_normalized = diffusion_model.normalize(latents_for_diff)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/server5090/Desktop/M11307320/diffusion-for-ood/dood/diffusion/diffusion_model.py", line 217, in normalize
+    return self.normalization(x)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/server5090/Desktop/M11307320/diffusion-for-ood/test_ood/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/server5090/Desktop/M11307320/diffusion-for-ood/test_ood/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/server5090/Desktop/M11307320/diffusion-for-ood/dood/diffusion/diffusion_model.py", line 148, in forward
+    self._update_running_stats(x)
+  File "/home/server5090/Desktop/M11307320/diffusion-for-ood/dood/diffusion/diffusion_model.py", line 88, in _update_running_stats
+    ptr = int(self.queue_ptr)
+          ^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

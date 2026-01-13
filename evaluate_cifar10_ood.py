@@ -7,6 +7,7 @@ from torchvision import datasets, transforms
 import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve
 from tqdm import tqdm
+import wandb
 
 from dood.models.resnet18_cifar10 import ResNet18_CIFAR10
 from dood.utils.diffusion import get_diffusion_model, get_diffusion_scores, load_diffusion_checkpoint
@@ -32,13 +33,19 @@ def parse_args():
     # Diffusion相关
     parser.add_argument('--diffusion_denoiser_channels', type=int, default=512, help='Diffusion denoiser channels')
     parser.add_argument('--num_diffusion_steps', type=int, default=1000, help='Number of diffusion steps')
-    parser.add_argument('--ood_eval_scores_type', type=str, default='eps_cos',
+    parser.add_argument('--ood_eval_scores_type', type=str, default='eps_mse',
                        choices=['eps_mse', 'eps_cos', 'recon_mse', 'bpd'],
                        help='Type of OOD scoring function')
     parser.add_argument('--num_eval_steps', type=int, default=25, help='Number of diffusion steps for evaluation')
     
     # 其他
     parser.add_argument('--device', type=str, default='cuda', help='Device to use (cuda/cpu)')
+    
+    # Wandb相关
+    parser.add_argument('--use_wandb', action='store_true', default=True, help='Use wandb for logging')
+    parser.add_argument('--wandb_project', type=str, default='diffusion-ood-cifar10', help='Wandb project name')
+    parser.add_argument('--wandb_name', type=str, default=None, help='Wandb run name (default: auto-generated)')
+    parser.add_argument('--wandb_entity', type=str, default=None, help='Wandb entity/team name')
     
     return parser.parse_args()
 
@@ -244,6 +251,18 @@ def evaluate_ood_detection(args):
     device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
     print(f'Using device: {device}')
     
+    # 初始化 wandb
+    if args.use_wandb:
+        run_name = args.wandb_name or f'eval_{args.ood_dataset}_{args.ood_eval_scores_type}'
+        wandb.init(
+            project=args.wandb_project,
+            name=run_name,
+            entity=args.wandb_entity,
+            config=vars(args),
+            reinit=True
+        )
+        print(f'Wandb initialized: project={args.wandb_project}, name={wandb.run.name}')
+    
     # 加载模型
     print('Loading models...')
     backbone = ResNet18_CIFAR10(
@@ -348,6 +367,20 @@ def evaluate_ood_detection(args):
     print(f'  OOD scores: mean={np.mean(ood_scores):.4f}, std={np.std(ood_scores):.4f}')
     print(f'  AUROC: {auroc:.4f}')
     print(f'  FPR@95%TPR: {fpr95:.4f}')
+    
+    # 记录到wandb
+    if args.use_wandb:
+        wandb.log({
+            'ood/id_score_mean': np.mean(id_scores),
+            'ood/id_score_std': np.std(id_scores),
+            'ood/ood_score_mean': np.mean(ood_scores),
+            'ood/ood_score_std': np.std(ood_scores),
+            'ood/auroc': auroc,
+            'ood/fpr_at_95_tpr': fpr95,
+            'ood/dataset': args.ood_dataset,
+            'ood/score_type': args.ood_eval_scores_type,
+        })
+        wandb.finish()
 
 
 if __name__ == '__main__':

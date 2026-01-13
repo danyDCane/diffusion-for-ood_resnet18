@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from tqdm import tqdm
 import numpy as np
+import wandb
 
 from dood.models.resnet18_cifar10 import ResNet18_CIFAR10
 from dood.utils.diffusion import get_diffusion_model
@@ -40,6 +41,12 @@ def parse_args():
     parser.add_argument('--save_dir', type=str, default='./checkpoints', help='Directory to save checkpoints')
     parser.add_argument('--save_freq', type=int, default=10, help='Frequency to save checkpoints (epochs)')
     parser.add_argument('--eval_freq', type=int, default=5, help='Frequency to evaluate (epochs)')
+    
+    # Wandb相关
+    parser.add_argument('--use_wandb', action='store_true', default=True, help='Use wandb for logging')
+    parser.add_argument('--wandb_project', type=str, default='diffusion-ood-cifar10', help='Wandb project name')
+    parser.add_argument('--wandb_name', type=str, default=None, help='Wandb run name (default: auto-generated)')
+    parser.add_argument('--wandb_entity', type=str, default=None, help='Wandb entity/team name')
     
     return parser.parse_args()
 
@@ -116,6 +123,17 @@ def train(args):
     # 设置设备
     device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
     print(f'Using device: {device}')
+    
+    # 初始化 wandb
+    if args.use_wandb:
+        wandb.init(
+            project=args.wandb_project,
+            name=args.wandb_name,
+            entity=args.wandb_entity,
+            config=vars(args),
+            reinit=True
+        )
+        print(f'Wandb initialized: project={args.wandb_project}, name={wandb.run.name}')
     
     # 创建保存目录
     os.makedirs(args.save_dir, exist_ok=True)
@@ -194,14 +212,68 @@ def train(args):
             # 归一化特征（这会自动更新归一化统计信息）
             latents_normalized = diffusion_model.normalize(latents_for_diff)
 
-            # 检查归一化后的特征范围
+            # 检查归一化后的特征范围（Normalized Feature Statistics）
             if batch_idx % 50 == 0:
-                print(f'Normalized features - min: {latents_normalized.min().item():.4f}, '
-                    f'max: {latents_normalized.max().item():.4f}, '
-                    f'mean: {latents_normalized.mean().item():.4f}, '
-                    f'std: {latents_normalized.std().item():.4f}')
+                norm_mean = latents_normalized.mean().item()
+                norm_std = latents_normalized.std().item()
+                norm_min = latents_normalized.min().item()
+                norm_max = latents_normalized.max().item()
+                
+                # 判断归一化是否正常
+                scale_to_unit_gauss = diffusion_model.normalization.scale_to_unit_gauss
+                if scale_to_unit_gauss:
+                    # 如果使用 scale_to_unit_gauss=True：Std 应该接近 1.0
+                    std_status = "OK" if abs(norm_std - 1.0) < 0.2 else "WARNING (std not ~1.0!)"
+                else:
+                    # 如果使用 MinMax：Std 应该适中 (0.2 ~ 0.6)，不能太小 (0.001)
+                    if norm_std < 0.001:
+                        std_status = "WARNING (std too small!)"
+                    elif 0.2 <= norm_std <= 0.6:
+                        std_status = "OK"
+                    else:
+                        std_status = "WARNING (std out of range!)"
+                
+                print(f'Normalized features - min: {norm_min:.4f}, '
+                      f'max: {norm_max:.4f}, '
+                      f'mean: {norm_mean:.4f}, '
+                      f'std: {norm_std:.4f} [{std_status}]')
+                
+                # 记录到 wandb（只记录关键指标）
+                if args.use_wandb:
+                    wandb.log({
+                        'normalized_features/std': norm_std,  # 最重要的指标
+                        'normalized_features/mean': norm_mean,
+                    })
 
             loss_diff = diffusion_model.get_loss_iter(latents_normalized)
+            
+            # 从 p_losses 中获取监控信息（每50个batch记录一次以减少wandb开销）
+            if batch_idx % 50 == 0 and hasattr(diffusion_model.diffusion_process, '_last_snr_info'):
+                monitor_info = diffusion_model.diffusion_process._last_snr_info
+                if args.use_wandb:
+                    # 只记录关键指标
+                    log_dict = {
+                        'snr/snr': monitor_info['snr'],  # 最重要的SNR指标
+                    }
+                    
+                    # 添加 Identity Correlation 指标（只记录平均值）
+                    if 'identity_correlation' in monitor_info:
+                        log_dict['trivial_solution/identity_correlation'] = monitor_info['identity_correlation']
+                    
+                    wandb.log(log_dict)
+                
+                # 判断SNR是否正常（应该接近1.0，如果小于0.1则警告）
+                snr_status = "OK" if monitor_info['snr'] > 0.1 else "WARNING (too low!)"
+                print(f'SNR: {monitor_info["snr"]:.4f} [{snr_status}], '
+                      f'||x_0||: {monitor_info["x0_norm"]:.4f} ± {monitor_info["x0_norm_std"]:.4f}, '
+                      f'||epsilon||: {monitor_info["noise_norm"]:.4f} ± {monitor_info["noise_norm_std"]:.4f}, '
+                      f'Expected: {monitor_info["expected_norm"]:.4f}')
+                
+                # 打印 Identity Correlation 信息
+                if 'identity_correlation' in monitor_info:
+                    trivial_status = "WARNING (Trivial Solution!)" if monitor_info['is_trivial_solution'] else "OK"
+                    print(f'Identity Correlation: {monitor_info["identity_correlation"]:.4f} ± {monitor_info["identity_correlation_std"]:.4f} [{trivial_status}], '
+                          f'Max: {monitor_info["identity_correlation_max"]:.4f}')
             
             # 反向传播 diffusion loss
             optimizer_diffusion.zero_grad()
@@ -228,6 +300,8 @@ def train(args):
             epoch_loss_diff += loss_diff.item()
             epoch_total_loss += loss_cls.item() + args.lambda_diff * loss_diff.item()
             
+            # 移除每个batch的wandb记录，只保留epoch级别的记录以减少开销
+            
             # 更新进度条
             pbar.set_postfix({
                 'loss_cls': f'{loss_cls.item():.4f}',
@@ -243,6 +317,45 @@ def train(args):
         avg_loss_diff = epoch_loss_diff / len(train_loader)
         avg_total_loss = epoch_total_loss / len(train_loader)
         
+        # 获取学习率
+        current_lr_backbone = optimizer_backbone.param_groups[0]['lr']
+        current_lr_diffusion = optimizer_diffusion.param_groups[0]['lr']
+        
+        # 记录epoch级别的指标到wandb
+        log_dict = {
+            'train/epoch_loss_cls': avg_loss_cls,
+            'train/epoch_loss_diff': avg_loss_diff,
+            'train/epoch_total_loss': avg_total_loss,
+            'train/lr_backbone': current_lr_backbone,
+            'train/lr_diffusion': current_lr_diffusion,
+            'epoch': epoch + 1,
+        }
+        
+        # 添加监控指标到epoch日志（只记录关键指标）
+        if hasattr(diffusion_model.diffusion_process, '_last_snr_info'):
+            monitor_info = diffusion_model.diffusion_process._last_snr_info
+            log_dict.update({
+                'snr/snr': monitor_info['snr'],  # 只保留最重要的SNR指标
+            })
+            
+            # 添加 Identity Correlation 指标（只记录平均值）
+            if 'identity_correlation' in monitor_info:
+                log_dict['trivial_solution/identity_correlation'] = monitor_info['identity_correlation']
+        
+        # 添加归一化特征统计信息到epoch日志（只记录std）
+        if args.use_wandb:
+            try:
+                with torch.no_grad():
+                    sample_data, _ = next(iter(train_loader))
+                    sample_data = sample_data.to(device)
+                    sample_latents = backbone.intermediate_forward(sample_data)
+                    sample_latents_normalized = diffusion_model.normalize(sample_latents.detach())
+                    
+                    norm_std = sample_latents_normalized.std().item()
+                    log_dict['normalized_features/std'] = norm_std  # 只记录最重要的std
+            except:
+                pass
+        
         print(f'\nEpoch {epoch+1}/{args.epochs}:')
         print(f'  Loss_cls: {avg_loss_cls:.4f}, Loss_diff: {avg_loss_diff:.4f}, Total: {avg_total_loss:.4f}')
         
@@ -250,11 +363,17 @@ def train(args):
         if (epoch + 1) % args.eval_freq == 0:
             accuracy = evaluate_classification(backbone, test_loader, device)
             print(f'  Test Accuracy: {accuracy:.2f}%')
+            log_dict['test/accuracy'] = accuracy
             
             # 保存最佳模型
             if accuracy > best_acc:
                 best_acc = accuracy
                 print(f'  New best accuracy: {best_acc:.2f}%')
+                log_dict['test/best_accuracy'] = best_acc
+        
+        # 记录到wandb
+        if args.use_wandb:
+            wandb.log(log_dict)
         
         # 保存checkpoint
         if (epoch + 1) % args.save_freq == 0:
@@ -283,6 +402,11 @@ def train(args):
     torch.save(final_checkpoint, final_path)
     print(f'\nFinal model saved to {final_path}')
     print(f'Best accuracy: {best_acc:.2f}%')
+    
+    # 记录最终结果到wandb
+    if args.use_wandb:
+        wandb.log({'final/best_accuracy': best_acc})
+        wandb.finish()
 
 
 if __name__ == '__main__':

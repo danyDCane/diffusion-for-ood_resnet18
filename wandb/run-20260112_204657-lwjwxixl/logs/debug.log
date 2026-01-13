@@ -1,0 +1,26 @@
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_setup.py:_flush():80] Current SDK version is 0.23.1
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_setup.py:_flush():80] Configure stats pid to 3138914
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_setup.py:_flush():80] Loading settings from /home/server5090/.config/wandb/settings
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_setup.py:_flush():80] Loading settings from /home/server5090/Desktop/M11307320/diffusion-for-ood/wandb/settings
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_setup.py:_flush():80] Loading settings from environment variables
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_init.py:setup_run_log_directory():714] Logging user logs to /home/server5090/Desktop/M11307320/diffusion-for-ood/wandb/run-20260112_204657-lwjwxixl/logs/debug.log
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_init.py:setup_run_log_directory():715] Logging internal logs to /home/server5090/Desktop/M11307320/diffusion-for-ood/wandb/run-20260112_204657-lwjwxixl/logs/debug-internal.log
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_init.py:init():841] calling init triggers
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_init.py:init():846] wandb.init called with sweep_config: {}
+config: {'data_root': '../datasets', 'batch_size': 128, 'num_workers': 4, 'pretrained': True, 'num_classes': 10, 'epochs': 200, 'lr_backbone': 0.1, 'lr_diffusion': 5e-05, 'momentum': 0.9, 'weight_decay': 0.0005, 'lambda_diff': 1.0, 'diffusion_denoiser_channels': 512, 'num_diffusion_steps': 1000, 'device': 'cuda', 'save_dir': './checkpoints', 'save_freq': 10, 'eval_freq': 5, 'use_wandb': True, 'wandb_project': 'diffusion-ood-cifar10', 'wandb_name': None, 'wandb_entity': None, '_wandb': {}}
+2026-01-12 20:46:57,544 INFO    MainThread:3138914 [wandb_init.py:init():889] starting backend
+2026-01-12 20:46:57,757 INFO    MainThread:3138914 [wandb_init.py:init():892] sending inform_init request
+2026-01-12 20:46:57,766 INFO    MainThread:3138914 [wandb_init.py:init():900] backend started and connected
+2026-01-12 20:46:57,777 INFO    MainThread:3138914 [wandb_init.py:init():970] updated telemetry
+2026-01-12 20:46:57,780 INFO    MainThread:3138914 [wandb_init.py:init():994] communicating run to backend with 90.0 second timeout
+2026-01-12 20:46:58,600 INFO    MainThread:3138914 [wandb_init.py:init():1041] starting run threads in backend
+2026-01-12 20:46:58,631 INFO    MainThread:3138914 [wandb_run.py:_console_start():2521] atexit reg
+2026-01-12 20:46:58,631 INFO    MainThread:3138914 [wandb_run.py:_redirect():2369] redirect: wrap_raw
+2026-01-12 20:46:58,631 INFO    MainThread:3138914 [wandb_run.py:_redirect():2438] Wrapping output streams.
+2026-01-12 20:46:58,631 INFO    MainThread:3138914 [wandb_run.py:_redirect():2461] Redirects installed.
+2026-01-12 20:46:58,636 INFO    MainThread:3138914 [wandb_init.py:init():1081] run started, returning control to user process
+2026-01-12 21:20:37,126 INFO    MainThread:3138914 [wandb_run.py:_finish():2287] finishing run danydcane-national-taiwan-university-of-science-and-tech/diffusion-ood-cifar10/lwjwxixl
+2026-01-12 21:20:37,127 INFO    MainThread:3138914 [wandb_run.py:_atexit_cleanup():2486] got exitcode: 0
+2026-01-12 21:20:37,128 INFO    MainThread:3138914 [wandb_run.py:_restore():2468] restore
+2026-01-12 21:20:37,128 INFO    MainThread:3138914 [wandb_run.py:_restore():2474] restore done
+2026-01-12 21:20:38,920 INFO    MainThread:3138914 [wandb_run.py:_footer_sync_info():3862] logging synced files

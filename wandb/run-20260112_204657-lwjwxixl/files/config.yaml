@@ -1,0 +1,96 @@
+_wandb:
+    value:
+        cli_version: 0.23.1
+        e:
+            k0iiur93zk1ac3exrbuabu6d0jqrye2w:
+                codePath: train_cifar10.py
+                codePathLocal: train_cifar10.py
+                cpu_count: 20
+                cpu_count_logical: 20
+                cudaVersion: "13.0"
+                disk:
+                    /:
+                        total: "1966736678912"
+                        used: "73508851712"
+                email: dany910611@gmail.com
+                executable: /home/server5090/Desktop/M11307320/diffusion-for-ood/test_ood/bin/python
+                git:
+                    commit: e1c1086046f10df9914daa93880de9d53ae27f8b
+                    remote: https://github.com/danyDCane/diffusion-for-ood_resnet18.git
+                gpu: NVIDIA GeForce RTX 5090
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Blackwell
+                      cudaCores: 21760
+                      memoryTotal: "34190917632"
+                      name: NVIDIA GeForce RTX 5090
+                      uuid: GPU-2d1bafc4-542c-8e41-04fb-5acefde6156a
+                host: server5090-System-Product-Name
+                memory:
+                    total: "32961908736"
+                os: Linux-6.14.0-35-generic-x86_64-with-glibc2.39
+                program: /home/server5090/Desktop/M11307320/diffusion-for-ood/train_cifar10.py
+                python: CPython 3.12.3
+                root: /home/server5090/Desktop/M11307320/diffusion-for-ood
+                startedAt: "2026-01-12T12:46:57.541205Z"
+                writerId: k0iiur93zk1ac3exrbuabu6d0jqrye2w
+        m: []
+        python_version: 3.12.3
+        t:
+            "1":
+                - 1
+                - 41
+            "2":
+                - 1
+                - 41
+            "3":
+                - 2
+                - 16
+            "4": 3.12.3
+            "5": 0.23.1
+            "10":
+                - 20
+            "12": 0.23.1
+            "13": linux-x86_64
+batch_size:
+    value: 128
+data_root:
+    value: ../datasets
+device:
+    value: cuda
+diffusion_denoiser_channels:
+    value: 512
+epochs:
+    value: 200
+eval_freq:
+    value: 5
+lambda_diff:
+    value: 1
+lr_backbone:
+    value: 0.1
+lr_diffusion:
+    value: 5e-05
+momentum:
+    value: 0.9
+num_classes:
+    value: 10
+num_diffusion_steps:
+    value: 1000
+num_workers:
+    value: 4
+pretrained:
+    value: true
+save_dir:
+    value: ./checkpoints
+save_freq:
+    value: 10
+use_wandb:
+    value: true
+wandb_entity:
+    value: null
+wandb_name:
+    value: null
+wandb_project:
+    value: diffusion-ood-cifar10
+weight_decay:
+    value: 0.0005

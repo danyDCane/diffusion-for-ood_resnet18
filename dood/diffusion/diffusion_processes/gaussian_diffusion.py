@@ -202,6 +202,38 @@ class GaussianDiffusion:
         if noise is None:
             noise = torch.randn(x_start.shape, dtype=x_start.dtype, device=x_start.device)
         assert noise.shape == x_start.shape and noise.dtype == x_start.dtype
+        
+        # ================= [START] 添加 SNR 監控指標 =================
+        with torch.no_grad():
+            # 1. Signal Magnitude (x_0 能量)
+            x0_norms = x_start.norm(p=2, dim=1)  # shape: (N,)
+            x0_norm = x0_norms.mean()
+            x0_norm_std = x0_norms.std()
+            
+            # 2. Noise Magnitude (雜訊能量)
+            noise_norms = noise.norm(p=2, dim=1)  # shape: (N,)
+            noise_norm = noise_norms.mean()
+            noise_norm_std = noise_norms.std()
+            
+            # 3. SNR Ratio
+            snr_energy = x0_norm / (noise_norm + 1e-8)
+            
+            # 4. 理论期望值（对于标准正态分布，||epsilon|| 的期望约为 sqrt(D)）
+            expected_norm = np.sqrt(dim)
+            
+            # 存储到类属性以便在训练循环中访问
+            self._last_snr_info = {
+                'snr': snr_energy.item(),
+                'x0_norm': x0_norm.item(),
+                'x0_norm_std': x0_norm_std.item(),
+                'noise_norm': noise_norm.item(),
+                'noise_norm_std': noise_norm_std.item(),
+                'expected_norm': expected_norm,
+                'x0_norm_ratio': (x0_norm.item() / expected_norm) if expected_norm > 0 else 0.0,
+                'noise_norm_ratio': (noise_norm.item() / expected_norm) if expected_norm > 0 else 0.0,
+            }
+        # ================= [END] 添加 SNR 監控指標 =================
+        
         # 用 noise 與 原圖 x_start 合成髒圖 x_t
         x_t = self.q_sample(x_start=x_start, t=t, noise=noise)
 
@@ -210,6 +242,7 @@ class GaussianDiffusion:
             # model_output 是模型「覺得」剛剛加進去的噪聲長什麼樣子。
             model_output = denoise_fn(x_t, t)
             
+            # 处理 model_var_type，提取预测的噪声部分
             if self.model_var_type == 'learned_range' or self.model_var_type == 'learned':
                 B, C = x_t.shape[:2]
                 assert model_output.shape == (B, C * 2, *x_t.shape[2:])
@@ -228,6 +261,36 @@ class GaussianDiffusion:
                 kl  *= self.num_timesteps / 1000.0
             else:
                 kl = 0.
+            
+            # ================= [START] 添加 Trivial Solution Indicator =================
+            with torch.no_grad():
+                # Prediction vs Input Correlation (是否只是輸出輸入?)
+                # 預測出的雜訊 vs 含噪輸入
+                # 如果 x0 很小，x_t 就全是 noise，那 model_output 也會很像 x_t
+                # 如果模型学会了偷懒（Trivial Solution），它会发现只要输出输入 (output = input)
+                # 就能得到完美的 epsilon 预测
+                
+                # 使用 PyTorch 内置函数计算余弦相似度（更简洁高效）
+                pred_input_cos = torch.nn.functional.cosine_similarity(model_output, x_t, dim=1)  # shape: (N,)
+                
+                # 计算统计量
+                identity_correlation_mean = pred_input_cos.mean().item()
+                identity_correlation_std = pred_input_cos.std().item()
+                identity_correlation_max = pred_input_cos.max().item()
+                
+                # 判断是否出现 Trivial Solution（如果 > 0.99 则警告）
+                is_trivial_solution = identity_correlation_mean > 0.99
+                
+                # 更新监控信息字典
+                if not hasattr(self, '_last_snr_info'):
+                    self._last_snr_info = {}
+                self._last_snr_info.update({
+                    'identity_correlation': identity_correlation_mean,
+                    'identity_correlation_std': identity_correlation_std,
+                    'identity_correlation_max': identity_correlation_max,
+                    'is_trivial_solution': is_trivial_solution,
+                })
+            # ================= [END] 添加 Trivial Solution Indicator =================
             
             loss = ((noise - model_output)**2).mean(-1)
             loss = loss + kl

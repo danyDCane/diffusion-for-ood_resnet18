@@ -7,3 +7,4 @@ scikit-image
 regex
 pytoml
 ftfy
+wandb
