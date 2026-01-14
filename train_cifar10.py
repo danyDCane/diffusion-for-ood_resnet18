@@ -13,16 +13,19 @@ from dood.utils.diffusion import get_diffusion_model
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Train ResNet18 with Diffusion OOD detection on CIFAR-10')
+    parser = argparse.ArgumentParser(description='Train ResNet18 with Diffusion OOD detection on CIFAR-10/100')
     
     # 数据相关
-    parser.add_argument('--data_root', type=str, default='../datasets', help='Root directory for CIFAR-10 dataset')
+    parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'cifar100'], 
+                        help='Dataset to use (cifar10 or cifar100)')
+    parser.add_argument('--data_root', type=str, default='../datasets', help='Root directory for dataset')
     parser.add_argument('--batch_size', type=int, default=128, help='Batch size for training')
     parser.add_argument('--num_workers', type=int, default=4, help='Number of data loading workers')
     
     # 模型相关
     parser.add_argument('--pretrained', action='store_true', default=True, help='Use ImageNet pretrained weights')
-    parser.add_argument('--num_classes', type=int, default=10, help='Number of classes (CIFAR-10: 10)')
+    parser.add_argument('--num_classes', type=int, default=None, 
+                        help='Number of classes (auto-set based on dataset if not specified)')
     
     # 训练相关
     parser.add_argument('--epochs', type=int, default=200, help='Number of training epochs')
@@ -51,30 +54,52 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_cifar10_loaders(data_root, batch_size, num_workers):
-    """加载CIFAR-10数据集"""
+def get_cifar_loaders(dataset_name, data_root, batch_size, num_workers):
+    """加载CIFAR-10或CIFAR-100数据集
+    
+    Args:
+        dataset_name: 'cifar10' 或 'cifar100'
+        data_root: 数据集根目录
+        batch_size: batch大小
+        num_workers: 数据加载worker数量
+    
+    Returns:
+        train_loader, test_loader
+    """
+    # CIFAR-10 和 CIFAR-100 的 normalization 参数
+    if dataset_name == 'cifar10':
+        mean = (0.4914, 0.4822, 0.4465)
+        std = (0.2023, 0.1994, 0.2010)
+        dataset_class = datasets.CIFAR10
+    elif dataset_name == 'cifar100':
+        mean = (0.5071, 0.4867, 0.4408)
+        std = (0.2675, 0.2565, 0.2761)
+        dataset_class = datasets.CIFAR100
+    else:
+        raise ValueError(f"Unsupported dataset: {dataset_name}")
+    
     # 训练集transform
     transform_train = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        transforms.Normalize(mean, std),
     ])
     
     # 测试集transform
     transform_test = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        transforms.Normalize(mean, std),
     ])
     
-    # 加载数据集
-    train_dataset = datasets.CIFAR10(
+    # 加载数据集（会自动下载如果不存在）
+    train_dataset = dataset_class(
         root=data_root, 
         train=True, 
         download=True, 
         transform=transform_train
     )
-    test_dataset = datasets.CIFAR10(
+    test_dataset = dataset_class(
         root=data_root, 
         train=False, 
         download=True, 
@@ -124,6 +149,17 @@ def train(args):
     device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
     print(f'Using device: {device}')
     
+    # 根据数据集自动设置类别数
+    if args.num_classes is None:
+        if args.dataset == 'cifar10':
+            args.num_classes = 10
+        elif args.dataset == 'cifar100':
+            args.num_classes = 100
+        else:
+            raise ValueError(f"Unsupported dataset: {args.dataset}")
+    
+    print(f'Dataset: {args.dataset.upper()}, Number of classes: {args.num_classes}')
+    
     # 初始化 wandb
     if args.use_wandb:
         wandb.init(
@@ -139,8 +175,9 @@ def train(args):
     os.makedirs(args.save_dir, exist_ok=True)
     
     # 加载数据
-    print('Loading CIFAR-10 dataset...')
-    train_loader, test_loader = get_cifar10_loaders(
+    print(f'Loading {args.dataset.upper()} dataset...')
+    train_loader, test_loader = get_cifar_loaders(
+        args.dataset,
         args.data_root, 
         args.batch_size, 
         args.num_workers
