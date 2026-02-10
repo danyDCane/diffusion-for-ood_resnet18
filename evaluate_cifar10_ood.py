@@ -2,12 +2,12 @@ import os
 import argparse
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms
 import numpy as np
+import pandas as pd
 from sklearn.metrics import roc_auc_score, roc_curve
 from tqdm import tqdm
-import wandb
 
 from dood.models.resnet18_cifar10 import ResNet18_CIFAR10
 from dood.utils.diffusion import get_diffusion_model, get_diffusion_scores, load_diffusion_checkpoint
@@ -40,12 +40,13 @@ def parse_args():
     
     # 其他
     parser.add_argument('--device', type=str, default='cuda', help='Device to use (cuda/cpu)')
+    parser.add_argument('--output_dir', type=str, default='./results', help='Directory to save results')
     
-    # Wandb相关
-    parser.add_argument('--use_wandb', action='store_true', default=True, help='Use wandb for logging')
-    parser.add_argument('--wandb_project', type=str, default='diffusion-ood-cifar10', help='Wandb project name')
-    parser.add_argument('--wandb_name', type=str, default=None, help='Wandb run name (default: auto-generated)')
-    parser.add_argument('--wandb_entity', type=str, default=None, help='Wandb entity/team name')
+    # 噪声OOD评估相关
+    parser.add_argument('--use_noise_ood', action='store_true', 
+                       help='Use noise as OOD dataset for evaluation')
+    parser.add_argument('--noise_samples', type=int, default=10000, 
+                       help='Number of noise samples to generate for OOD evaluation')
     
     return parser.parse_args()
 
@@ -246,22 +247,59 @@ def get_ood_loader(args):
         raise NotImplementedError(f'OOD dataset {args.ood_dataset} not implemented')
 
 
+class NoiseDataset(Dataset):
+    """生成随机噪声图像作为OOD数据集（适配CIFAR-10）"""
+    def __init__(self, num_samples, image_size=(32, 32), num_channels=3):
+        """
+        Args:
+            num_samples: 生成的噪声样本数量
+            image_size: 图像尺寸 (height, width)，默认 (32, 32) 用于CIFAR-10
+            num_channels: 图像通道数，默认3（RGB）
+        """
+        self.num_samples = num_samples
+        self.image_size = image_size
+        self.num_channels = num_channels
+        
+        # CIFAR-10的normalization参数
+        self.normalize = transforms.Normalize(
+            mean=(0.4914, 0.4822, 0.4465), 
+            std=(0.2023, 0.1994, 0.2010)
+        )
+    
+    def __len__(self):
+        return self.num_samples
+    
+    def __getitem__(self, idx):
+        # 生成随机噪声图像 [0, 1] 范围（ToTensor后的范围）
+        # 使用均匀分布生成随机噪声
+        noise_image = torch.rand(self.num_channels, self.image_size[0], self.image_size[1])
+        
+        # 应用normalization（与CIFAR-10测试数据一致）
+        noise_image = self.normalize(noise_image)
+        
+        # 返回噪声图像和dummy标签（OOD不需要真实标签）
+        return noise_image, 0
+
+
+def get_noise_loader(num_samples, batch_size, num_workers, image_size=(32, 32)):
+    """创建噪声数据集的DataLoader（适配CIFAR-10）"""
+    noise_dataset = NoiseDataset(num_samples=num_samples, image_size=image_size)
+    
+    loader = DataLoader(
+        noise_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=True
+    )
+    
+    return loader
+
+
 def evaluate_ood_detection(args):
     """评估OOD检测性能"""
     device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
     print(f'Using device: {device}')
-    
-    # 初始化 wandb
-    if args.use_wandb:
-        run_name = args.wandb_name or f'eval_{args.ood_dataset}_{args.ood_eval_scores_type}'
-        wandb.init(
-            project=args.wandb_project,
-            name=run_name,
-            entity=args.wandb_entity,
-            config=vars(args),
-            reinit=True
-        )
-        print(f'Wandb initialized: project={args.wandb_project}, name={wandb.run.name}')
     
     # 加载模型
     print('Loading models...')
@@ -292,7 +330,21 @@ def evaluate_ood_detection(args):
     # 加载数据集
     print('Loading datasets...')
     id_loader = get_cifar10_loader(args.data_root, args.batch_size, args.num_workers, train=False)
-    ood_loader = get_ood_loader(args)
+    
+    # 根据参数决定使用哪个OOD数据集
+    if args.use_noise_ood:
+        # 如果启用噪声OOD，使用噪声作为OOD数据集
+        ood_loader = get_noise_loader(
+            args.noise_samples,
+            args.batch_size,
+            args.num_workers,
+            image_size=(32, 32)  # CIFAR-10尺寸
+        )
+        ood_dataset_name = 'Noise'
+    else:
+        # 否则使用常规OOD数据集
+        ood_loader = get_ood_loader(args)
+        ood_dataset_name = args.ood_dataset
     
     print(f'Evaluating on ID dataset (CIFAR-10 test set)...')
     id_scores = []
@@ -319,8 +371,10 @@ def evaluate_ood_detection(args):
             id_scores.append(scores_np.flatten())
     
     id_scores = np.concatenate(id_scores)
+    id_scores_original = id_scores.copy()  # 保存原始ID分数
     
-    print(f'Evaluating on OOD dataset ({args.ood_dataset})...')
+    # 评估OOD数据集
+    print(f'Evaluating on OOD dataset ({ood_dataset_name})...')
     ood_scores = []
     with torch.no_grad():
         for data, _ in tqdm(ood_loader, desc='OOD samples'):
@@ -346,41 +400,93 @@ def evaluate_ood_detection(args):
     
     ood_scores = np.concatenate(ood_scores)
     
-    # 计算指标
+    # 计算指标和统计信息
     print('\nComputing metrics...')
     
-    # 对于OOD检测，通常OOD样本的分数应该更高
-    # 但根据不同的评分函数，可能需要反转
-    # 这里假设分数越高越可能是OOD
+    # 如果ID分数更高，需要反转（用于计算指标）
+    id_scores_for_metric = id_scores_original.copy()
+    ood_scores_for_metric = ood_scores.copy()
+    if np.mean(id_scores_original) > np.mean(ood_scores):
+        print('Warning: ID scores are higher than OOD scores. Inverting scores for metric calculation.')
+        id_scores_for_metric = -id_scores_original
+        ood_scores_for_metric = -ood_scores
     
-    # 如果ID分数更高，需要反转
-    if np.mean(id_scores) > np.mean(ood_scores):
-        print('Warning: ID scores are higher than OOD scores. Inverting scores.')
-        id_scores = -id_scores
-        ood_scores = -ood_scores
+    # 计算指标
+    auroc = compute_auroc(id_scores_for_metric, ood_scores_for_metric)
+    fpr95 = compute_fpr_at_tpr(id_scores_for_metric, ood_scores_for_metric, tpr=0.95)
     
-    auroc = compute_auroc(id_scores, ood_scores)
-    fpr95 = compute_fpr_at_tpr(id_scores, ood_scores, tpr=0.95)
+    # 计算OOD统计信息（基于原始分数）
+    ood_mean = np.mean(ood_scores)
+    ood_std = np.std(ood_scores)
+    ood_min = np.min(ood_scores)
+    ood_max = np.max(ood_scores)
+    ood_num_samples = len(ood_scores)
     
-    print(f'\nResults:')
-    print(f'  ID scores: mean={np.mean(id_scores):.4f}, std={np.std(id_scores):.4f}')
-    print(f'  OOD scores: mean={np.mean(ood_scores):.4f}, std={np.std(ood_scores):.4f}')
-    print(f'  AUROC: {auroc:.4f}')
-    print(f'  FPR@95%TPR: {fpr95:.4f}')
+    # ID统计信息
+    id_mean = np.mean(id_scores_original)
+    id_std = np.std(id_scores_original)
+    id_min = np.min(id_scores_original)
+    id_max = np.max(id_scores_original)
+    id_num_samples = len(id_scores_original)
     
-    # 记录到wandb
-    if args.use_wandb:
-        wandb.log({
-            'ood/id_score_mean': np.mean(id_scores),
-            'ood/id_score_std': np.std(id_scores),
-            'ood/ood_score_mean': np.mean(ood_scores),
-            'ood/ood_score_std': np.std(ood_scores),
-            'ood/auroc': auroc,
-            'ood/fpr_at_95_tpr': fpr95,
-            'ood/dataset': args.ood_dataset,
-            'ood/score_type': args.ood_eval_scores_type,
-        })
-        wandb.finish()
+    # 打印详细结果
+    print(f'\n{"="*80}')
+    print(f'Results Summary:')
+    print(f'{"="*80}')
+    print(f'{"Dataset":<20} {"Mean Score":<15} {"Std":<15} {"Min":<15} {"Max":<15} {"Num Samples":<15}')
+    print(f'{"-"*80}')
+    print(f'{"ID (CIFAR-10)":<20} {id_mean:<15.6f} {id_std:<15.6f} {id_min:<15.6f} {id_max:<15.6f} {id_num_samples:<15}')
+    print(f'{"OOD (" + ood_dataset_name + ")":<20} {ood_mean:<15.6f} {ood_std:<15.6f} {ood_min:<15.6f} {ood_max:<15.6f} {ood_num_samples:<15}')
+    print(f'{"-"*80}')
+    print(f'\nMetrics:')
+    print(f'  AUROC: {auroc:.6f}')
+    print(f'  FPR@95%TPR: {fpr95:.6f}')
+    print(f'{"="*80}')
+    
+    # 创建输出目录
+    os.makedirs(args.output_dir, exist_ok=True)
+    
+    # 保存统计信息到CSV
+    results_dict = {
+        'dataset': ['ID (CIFAR-10)', f'OOD ({ood_dataset_name})'],
+        'mean_score': [id_mean, ood_mean],
+        'std_score': [id_std, ood_std],
+        'min_score': [id_min, ood_min],
+        'max_score': [id_max, ood_max],
+        'num_samples': [id_num_samples, ood_num_samples],
+        'score_type': [args.ood_eval_scores_type, args.ood_eval_scores_type],
+        'auroc': [auroc, auroc],  # 两个数据集共享同一个AUROC
+        'fpr95': [fpr95, fpr95]   # 两个数据集共享同一个FPR95
+    }
+    
+    df = pd.DataFrame(results_dict)
+    csv_filename = f'ood_scores_{ood_dataset_name.lower()}_{args.ood_eval_scores_type}.csv'
+    csv_path = os.path.join(args.output_dir, csv_filename)
+    df.to_csv(csv_path, index=False)
+    print(f'\nResults saved to CSV: {csv_path}')
+    
+    # 保存完整的分数数组到numpy文件
+    npz_filename = f'ood_scores_{ood_dataset_name.lower()}_{args.ood_eval_scores_type}.npz'
+    npz_path = os.path.join(args.output_dir, npz_filename)
+    np.savez(
+        npz_path,
+        id_scores=id_scores_original,  # 保存原始ID分数（未反转）
+        ood_scores=ood_scores,  # 保存原始OOD分数（未反转）
+        id_mean=id_mean,
+        id_std=id_std,
+        id_min=id_min,
+        id_max=id_max,
+        ood_mean=ood_mean,
+        ood_std=ood_std,
+        ood_min=ood_min,
+        ood_max=ood_max,
+        auroc=auroc,
+        fpr95=fpr95,
+        ood_dataset=ood_dataset_name,
+        score_type=args.ood_eval_scores_type,
+        num_eval_steps=args.num_eval_steps
+    )
+    print(f'Full scores saved to NPZ: {npz_path}')
 
 
 if __name__ == '__main__':

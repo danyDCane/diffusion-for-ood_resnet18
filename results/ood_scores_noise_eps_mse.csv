@@ -1,0 +1,3 @@
+dataset,mean_score,std_score,min_score,max_score,num_samples,score_type,auroc,fpr95
+ID (CIFAR-10),13.762117,1.4305594,9.472397,21.637318,10000,eps_mse,0.99973644,0.0005
+OOD (Noise),20.72946,0.61971146,18.399002,23.378666,10000,eps_mse,0.99973644,0.0005
